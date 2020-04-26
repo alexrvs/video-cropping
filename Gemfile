@@ -14,15 +14,40 @@ gem 'puma', '~> 4.1'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+# Db
+# Wrapper MongoDb
+gem 'mongoid'
+gem 'kaminari-mongoid', '~> 0.1.0'
+
+# Uploaders
+gem 'carrierwave-video'
+gem 'carrierwave_backgrounder'
+gem 'carrierwave-mongoid', require: 'carrierwave/mongoid'
+
+# Background Jobs
+gem 'sidekiq'
+
+# Ffmpeg wprapper
+gem 'streamio-ffmpeg'
+
+# Api instruments
+gem 'active_model_serializers', '~> 0.10.0'
+gem 'versionist'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-# gem 'rack-cors'
+gem 'rack-cors'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'pry-rails'
+  gem 'rspec-rails', '~> 3.6'
+  gem 'faker'
+  gem 'factory_bot_rails'
+  gem 'database_cleaner'
 end
 
 group :development do
