@@ -38,12 +38,23 @@ class VideoUploader < CarrierWave::Uploader::Base
   # end
   #process encode: [:mp4, PROCESSED_DEFAULTS]
 
+  #process :trimmer
+
+  def trimmer
+    video = FFMPEG::Movie.new(@file.path)
+    video.transcode(@file.path, [
+        "-ss", model.start_time_trim.to_s,
+        "-t", (model.end_time_trim - model.start_time_trim).to_s
+    ])
+  end
+
   # Process files as they are uploaded:
-  # process :scale => [200, 300]
+  #process :scale => [200, 300]
   #
   # def scale(width, height)
   #   # do something
   # end
+
 
   # Create different versions of your uploaded files:
   # version :thumb do

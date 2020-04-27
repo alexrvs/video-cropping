@@ -1,11 +1,16 @@
 class Video
   include Mongoid::Document
   include Mongoid::Timestamps
+  include AASM
+
   field :file, type: String
   field :file_tmp, type: String
   field :file_processing, type: Mongoid::Boolean
   field :start_time_trim, type: Integer
   field :end_time_trim, type: Integer
+  field :input_video_duration, type: Integer
+  field :input_video_duration, type: Integer
+  field :state, type: String
 
   belongs_to :user, inverse_of: :video
 
@@ -16,5 +21,18 @@ class Video
   store_in_background :file
 
   validates_presence_of :file
+
+
+  # aasm column: 'state' do
+  #   state :scheduled
+  #   state :processing
+  #   state :done
+  #   state :failed
+  #
+  #   event :start do
+  #
+  #   end
+  #
+  # end
 
 end
