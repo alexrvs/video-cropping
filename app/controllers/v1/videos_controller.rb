@@ -3,38 +3,23 @@ class V1::VideosController < ApplicationController
 
   # GET /videos
   def index
-    @videos = Video.all
-
-    render json: @videos
-  end
-
-  # GET /videos/1
-  def show
-    render json: @video
+    @videos = current_user.videos.order_by(updated_at: :desc)
+                  .page(oarams[:page] || 1).per(30)
+    render json: @videos, each_serializer: VideoSerializer
   end
 
   # POST /videos
   def create
-    @videos = current_user.videos.create!(video_params)
-    if @video.save
-      render json: @video, status: :created, location: @video
+    if current_user.videos.create!(video_params)
+      render json: {result: true}, status: :created
     else
-      render json: @video.errors, status: :unprocessable_entity
+      render json: {result: false}, status: :unprocessable_entity
     end
+
   end
 
-  # PATCH/PUT /videos/1
-  def update
-    if @video.update(video_params)
-      render json: @video
-    else
-      render json: @video.errors, status: :unprocessable_entity
-    end
-  end
+  def reload
 
-  # DELETE /videos/1
-  def destroy
-    @video.destroy
   end
 
   private

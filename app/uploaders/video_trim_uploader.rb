@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-class VideoUploader < CarrierWave::Uploader::Base
+class VideoTrimUploader < CarrierWave::Uploader::Base
 
   # Include RMagick or MiniMagick support:
   # include CarrierWave::RMagick
@@ -9,16 +9,6 @@ class VideoUploader < CarrierWave::Uploader::Base
   include ::CarrierWave::Backgrounder::Delay
   include ::CarrierWave::Video
 
-  PROCESSED_DEFAULTS = {
-      resolution: '500x400', # desired video resolution; by default it preserves height ratio preserve_aspect_ratio: :height.
-      video_codec: 'libx264', # H.264/MPEG-4 AVC video codec
-      constant_rate_factor: '30', # GOP Size
-      frame_rate: '25', # frame rate
-      audio_codec: 'aac', # AAC audio codec
-      audio_bitrate: '64k', # Audio bitrate
-      audio_sample_rate: '44100' # Audio sampling frequency
-  }.freeze
-
   # Choose what kind of storage to use for this uploader:
   storage :file
   # storage :fog
@@ -26,7 +16,7 @@ class VideoUploader < CarrierWave::Uploader::Base
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
-    "uploads/tmp/#{mounted_as}/#{model.id}"
+    "uploads/cropped/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
@@ -36,10 +26,8 @@ class VideoUploader < CarrierWave::Uploader::Base
   #
   #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
   # end
-  #process encode: [:mp4, PROCESSED_DEFAULTS]
 
-
-  #process :trimmer
+  process :trimmer
 
   def trimmer
     video = FFMPEG::Movie.new(@file.path)

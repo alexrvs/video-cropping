@@ -1,0 +1,3 @@
+class VideoTrimService
+
+end
