@@ -15,8 +15,7 @@ class V1::VideosController < ApplicationController
 
   # POST /videos
   def create
-    @video = Video.new(video_params)
-
+    @videos = current_user.videos.create!(video_params)
     if @video.save
       render json: @video, status: :created, location: @video
     else
@@ -39,13 +38,9 @@ class V1::VideosController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_video
-      @video = Video.find(params[:id])
-    end
 
     # Only allow a trusted parameter "white list" through.
     def video_params
-      params.require(:video).permit(:file, :file_tmp, :file_processing, :start_time_trim, :end_time_trim)
+      params.require(:video).permit(:file, :start_time_trim, :end_time_trim)
     end
 end

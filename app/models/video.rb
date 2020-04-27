@@ -8,9 +8,12 @@ class Video
   field :file_processing, type: Mongoid::Boolean
   field :start_time_trim, type: Integer
   field :end_time_trim, type: Integer
+<<<<<<< HEAD
   field :input_video_duration, type: Integer
   field :input_video_duration, type: Integer
   field :state, type: String
+=======
+>>>>>>> feature/carrierwave-uploader
 
   belongs_to :user, inverse_of: :video
 
@@ -22,6 +25,7 @@ class Video
 
   validates_presence_of :file
 
+<<<<<<< HEAD
 
   # aasm column: 'state' do
   #   state :scheduled
@@ -35,4 +39,6 @@ class Video
   #
   # end
 
+=======
+>>>>>>> feature/carrierwave-uploader
 end

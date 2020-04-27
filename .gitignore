@@ -17,5 +17,7 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+/config/mongoid.yml
+/config/sidekiq.yml
 /.idea/*
 public/uploads/
