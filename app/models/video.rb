@@ -1,10 +1,13 @@
 class Video
+  include GlobalID::Identification
   include Mongoid::Document
   include Mongoid::Timestamps
   include AASM
 
-  field :file, type: String
-  field :file_processing, type: Mongoid::Boolean
+  field :input_video, type: String
+  field :input_video_tmp, type: String
+  field :input_video_processing, type: Mongoid::Boolean
+  field :output_video, type: String
   field :start_time_trim, type: Integer
   field :end_time_trim, type: Integer
   field :input_video_duration, type: Integer
@@ -13,20 +16,19 @@ class Video
 
   belongs_to :user, inverse_of: :video
 
-  mount_uploader :input_video, VideoUploader, mount_on: :input_video_file
-  mount_uploader :output_video, VideoTrimUploader, mount_on: output_video_file
+  mount_uploader :input_video, VideoUploader, mount_on: :input_video
+  process_in_background :input_video
+  store_in_background :input_video
 
-  process_in_background :file
+  validates_presence_of :input_video
 
-  store_in_background :file
-
-  validates_presence_of :file
+  mount_uploader :output_video, VideoTrimUploader
 
   validate :start_time_trim, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validate :end_time_trim, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   aasm do
-    state :scheduled
+    state :scheduled, initial: true
     state :processing
     state :done
     state :failed
@@ -48,6 +50,17 @@ class Video
       transitions from: :failed, to: :scheduled
     end
 
+  end
+
+  def run_worker!
+    if self.scheduled?
+      VideoActiveJobWorker.preform_later(self)
+    end
+  end
+
+  def restart!
+    self.schedule!
+    self.run_worker!
   end
 
 end

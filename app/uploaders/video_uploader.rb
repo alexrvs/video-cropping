@@ -9,16 +9,6 @@ class VideoUploader < CarrierWave::Uploader::Base
   include ::CarrierWave::Backgrounder::Delay
   include ::CarrierWave::Video
 
-  PROCESSED_DEFAULTS = {
-      resolution: '500x400', # desired video resolution; by default it preserves height ratio preserve_aspect_ratio: :height.
-      video_codec: 'libx264', # H.264/MPEG-4 AVC video codec
-      constant_rate_factor: '30', # GOP Size
-      frame_rate: '25', # frame rate
-      audio_codec: 'aac', # AAC audio codec
-      audio_bitrate: '64k', # Audio bitrate
-      audio_sample_rate: '44100' # Audio sampling frequency
-  }.freeze
-
   # Choose what kind of storage to use for this uploader:
   storage :file
   # storage :fog
@@ -38,16 +28,6 @@ class VideoUploader < CarrierWave::Uploader::Base
   # end
   #process encode: [:mp4, PROCESSED_DEFAULTS]
 
-
-  #process :trimmer
-
-  def trimmer
-    video = FFMPEG::Movie.new(@file.path)
-    video.transcode(@file.path, [
-        "-ss", model.start_time_trim.to_s,
-        "-t", (model.end_time_trim - model.start_time_trim).to_s
-    ])
-  end
 
   # Process files as they are uploaded:
   #process :scale => [200, 300]
