@@ -1,0 +1,6 @@
+:verbose: true
+:pidfile: ./tmp/pids/sidekiq.pig
+:logfile: ./log/sidekiq.log
+:concurency: 3
+:queues:
+  - carrierwave
