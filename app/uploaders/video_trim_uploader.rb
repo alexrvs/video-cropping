@@ -30,8 +30,8 @@ class VideoTrimUploader < CarrierWave::Uploader::Base
   process :trimmer
 
   def trimmer
-    video = FFMPEG::Movie.new(@file.path)
-    video.transcode(@file.path, [
+    video = FFMPEG::Movie.new(@input_video.path)
+    video.transcode(@input_video.path, [
         "-ss", model.start_time_trim.to_s,
         "-t", (model.end_time_trim - model.start_time_trim).to_s
     ])

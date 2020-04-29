@@ -1,6 +1,8 @@
-class VideoSerializer < ActiveModel::Serializer
-  attributes :id, :file, :file_processing, :start_time_trim, :end_time_trim,
-             :input_video_duration, :output_video_duration, :status
+class V1::VideoSerializer < ActiveModel::Serializer
+
+  attributes :input_video, :input_video_tmp, :input_video_processing,
+  :output_video, :start_time_trim, :end_time_trim, :input_video_duration,
+  :output_video_duration, :status
 
 
   def status

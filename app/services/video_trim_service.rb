@@ -8,12 +8,12 @@ class VideoTrimService
 
   def call
     begin
+      @video.start!
       crop_video!
     rescue Exception => e
       video.failed!
     end
   end
-
 
   private
 
@@ -21,20 +21,16 @@ class VideoTrimService
 
   end
 
-
   def validate_video_duration
 
   end
 
-
   def crop_video!
-    video = FFMPEG::Movie.new(video.input_video.path)
-    video.transcode(video.output_video.path, [
-        "-ss", video.start_time_trim.to_s,
-        "-t", (video.end_time_trim - video.start_time_trim).to_s
-    ])
+    File.open(tmp_file_path, "r") do |file|
+      @video.output_video = file
+      @video.complete!
+    end
+    @video.save!
   end
-
-
 
 end

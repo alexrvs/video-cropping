@@ -22,10 +22,10 @@ class Video
 
   validates_presence_of :input_video
 
-  mount_uploader :output_video, VideoTrimUploader
+  mount_uploader :output_video, VideoTrimUploader, mount_on: :output_video
 
-  validate :start_time_trim, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
-  validate :end_time_trim, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  validates :start_time_trim, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  validates :end_time_trim, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   aasm do
     state :scheduled, initial: true
@@ -54,7 +54,7 @@ class Video
 
   def run_worker!
     if self.scheduled?
-      VideoActiveJobWorker.preform_later(self)
+      VideoActiveJobWorker.perform_later(self)
     end
   end
 
