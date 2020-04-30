@@ -59,7 +59,7 @@ class Video
 
   def run_worker!
     if self.scheduled?
-      VideoActiveJobWorker.perform_now(self)
+      VideoActiveJobWorker.perform_later(self)
     end
   end
 
