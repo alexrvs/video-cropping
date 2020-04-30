@@ -21,7 +21,7 @@ gem 'kaminari-mongoid', '~> 0.1.0'
 
 # Uploaders
 gem 'carrierwave-video'
-gem 'carrierwave_backgrounder'
+gem 'carrierwave_backgrounder', github: 'lardawge/carrierwave_backgrounder'
 gem 'carrierwave-mongoid', require: 'carrierwave/mongoid'
 
 # Background Jobs
