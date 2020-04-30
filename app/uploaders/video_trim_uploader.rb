@@ -27,21 +27,12 @@ class VideoTrimUploader < CarrierWave::Uploader::Base
   #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
   # end
 
-  process :encode
+  process :trimmer
 
   def trimmer
-    binding.pry
-    video = FFMPEG::Movie.new(model.input_video.path)
-    video.transcode("#{::Rails.root}/uploads/#{mounted_as}/#{model.id}/test.mp4",
-                    [
-                       "-ss", model.start_time_trim.to_s,
-                       "-t", (model.end_time_trim - model.start_time_trim).to_s
-                   ])
-  end
-
-  def encode
     movie = ::FFMPEG::Movie.new(current_path)
-    tmp_path = File.join( File.dirname(current_path),   "tmpfile.mp4" )
+    tmp_file_name = "tmp_#{model.input_video_file}"
+    tmp_path = File.join(File.dirname(current_path), tmp_file_name)
     options = [
         "-ss", model.start_time_trim.to_s,
         "-t", (model.end_time_trim - model.start_time_trim).to_s

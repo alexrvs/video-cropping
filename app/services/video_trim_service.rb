@@ -21,12 +21,9 @@ class VideoTrimService
 
   private
 
-  def validate_input_video
-  end
+  def validate!
 
-  def validate_video_duration
   end
-
 
   def crop_video!
     file = prepare_output_tmp_file
