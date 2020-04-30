@@ -46,13 +46,19 @@ group :development, :test do
   gem 'pry-rails'
   gem 'rspec-rails', '~> 3.6'
   gem 'faker'
-  gem 'factory_bot_rails'
+  gem 'factory_girl_rails'
   gem 'database_cleaner'
 end
 
 gem 'aasm', '~> 4.11', '>= 4.11.1'
-
 gem 'rswag'
+
+group :test do
+  gem 'mongoid-rspec'
+  gem 'simplecov'
+  gem 'simplecov-rcov'
+
+end
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
