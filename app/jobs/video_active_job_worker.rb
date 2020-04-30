@@ -1,6 +1,7 @@
 class VideoActiveJobWorker < ApplicationJob
+  queue_as :carrierwave
 
-  def perform(input_video)
-    VideoTrimService.new(input_video).call
+  def perform(video)
+    VideoTrimService.new(video).call
   end
 end

@@ -20,8 +20,8 @@ class V1::VideosController < ApplicationController
 
   private
 
-    def video_params
-      params.require(:video).permit(:input_video, :start_time_trim, :end_time_trim)
-    end
+  def video_params
+    params.require(:video).permit(:input_video, :start_time_trim, :end_time_trim)
+  end
 
 end

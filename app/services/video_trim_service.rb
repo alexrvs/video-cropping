@@ -1,6 +1,6 @@
 class VideoTrimService
 
-  attr_accessor :video
+  attr_reader :video, :uploader
 
   def initialize(video)
     @video = video
@@ -8,29 +8,40 @@ class VideoTrimService
 
   def call
     begin
-      @video.start!
+      video.start!
       crop_video!
+    rescue FFMPEG::Error => e
+      video.processing_errors = e.message
+      video.fail!
     rescue Exception => e
-      video.failed!
+      video.processing_errors = e.message
+      video.fail!
     end
   end
 
   private
 
   def validate_input_video
-
   end
 
   def validate_video_duration
-
   end
 
+
   def crop_video!
-    File.open(tmp_file_path, "r") do |file|
-      @video.output_video = file
-      @video.complete!
-    end
-    @video.save!
+    file = prepare_output_tmp_file
+    video.output_video = file
+    video.completed!
+  end
+
+  def prepare_output_tmp_file
+    video.save!
+    pre_file = File.new(video.input_video.path)
+    ActionDispatch::Http::UploadedFile.new(tempfile: pre_file,
+                                           filename: File.basename(pre_file),
+                                           type: MIME::Types.type_for(video.input_video_file)
+                                                     .first.content_type
+                                          )
   end
 
 end

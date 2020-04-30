@@ -16,7 +16,7 @@ class VideoTrimUploader < CarrierWave::Uploader::Base
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
-    "uploads/cropped/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+    "uploads/#{mounted_as}/#{model.id}"
   end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
@@ -27,14 +27,27 @@ class VideoTrimUploader < CarrierWave::Uploader::Base
   #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
   # end
 
-  process :trimmer
+  process :encode
 
   def trimmer
-    video = FFMPEG::Movie.new(@input_video.path)
-    video.transcode(@input_video.path, [
+    binding.pry
+    video = FFMPEG::Movie.new(model.input_video.path)
+    video.transcode("#{::Rails.root}/uploads/#{mounted_as}/#{model.id}/test.mp4",
+                    [
+                       "-ss", model.start_time_trim.to_s,
+                       "-t", (model.end_time_trim - model.start_time_trim).to_s
+                   ])
+  end
+
+  def encode
+    movie = ::FFMPEG::Movie.new(current_path)
+    tmp_path = File.join( File.dirname(current_path),   "tmpfile.mp4" )
+    options = [
         "-ss", model.start_time_trim.to_s,
         "-t", (model.end_time_trim - model.start_time_trim).to_s
-    ])
+    ]
+    movie.transcode(tmp_path, options)
+    File.rename tmp_path, current_path
   end
 
   # Process files as they are uploaded:
