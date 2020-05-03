@@ -52,20 +52,22 @@ class Video
 
     event :fail do
       transitions from: :processing, to: :failed
-
+      after do
+        self.output_video_processing = true
+      end
     end
 
   end
 
   def run_worker!
     if self.scheduled?
-      VideoActiveJobWorker.perform_later(self)
+      VideoTrimService.new(self).call
     end
   end
 
   def restart!
     self.schedule!
-    self.run_worker!
+    run_worker!
   end
 
 end

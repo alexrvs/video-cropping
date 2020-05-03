@@ -12,4 +12,12 @@ class CropperService
     end
   end
 
+  def input_video_duration
+    video.update_attribute(:input_video_duration, ffmpeg_video.duration)
+  end
+
+  def output_video_duration
+    video.update_attribute(:output_video_duration, ffmpeg_video.duration)
+  end
+
 end

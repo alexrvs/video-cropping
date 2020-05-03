@@ -22,7 +22,7 @@ class VideoTrimService
   private
 
   def validate!
-
+    video.output_video_duration < video.input_video_duration
   end
 
   def crop_video!
