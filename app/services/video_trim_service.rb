@@ -16,7 +16,6 @@ class VideoTrimService
       video.fail!
     rescue Exception => e
       video.processing_errors = e.message
-      binding.pry
       video.fail!
     end
   end
@@ -27,9 +26,9 @@ class VideoTrimService
     has_input_video_attributes = video.input_video_file? && video.input_video_duration?
     valid_start_trim_time = video.start_time_trim < video.input_video_duration.to_i
     valid_end_trim_time = video.end_time_trim < video.input_video_duration.to_i
-    raise Exception, "Input file doesn't uploaded" unless has_input_video_attributes
-    #raise ExceptionHandler unless has_input_video_attributes
-    raise Exception, 'Start or End time greater than input video duration' unless valid_start_trim_time && valid_end_trim_time
+    raise Exception, "Input file wasn't uploaded" unless has_input_video_attributes
+    raise Exception, 'Start time greater than input video duration' unless valid_start_trim_time
+    raise Exception, 'End time greater than input video duration' unless  valid_end_trim_time
 
     true
   end
@@ -41,7 +40,6 @@ class VideoTrimService
   end
 
   def prepare_output_tmp_file
-    video.save!
     pre_file = File.new(video.input_video.path)
     ActionDispatch::Http::UploadedFile.new(tempfile: pre_file,
                                            filename: File.basename(pre_file),
