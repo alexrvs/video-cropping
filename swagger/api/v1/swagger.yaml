@@ -1,0 +1,64 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/users":
+    post:
+      summary: Creates a User
+      tags:
+      - Users
+      parameters: []
+      responses:
+        '201':
+          description: user created
+          content: {}
+        '422':
+          description: invalid request
+          content: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+              required: []
+  "/api/v1/videos":
+    parameters:
+    - name: file
+      in: formData
+      required: true
+      schema:
+        type: file
+    - name: video
+      in: formData
+      schema:
+        type: object
+        properties:
+          start_time_trim:
+            type: integer
+          end_time_trim:
+            type: integer
+        required:
+        - start_time_trim
+        - end_time_trim
+    post:
+      summary: Uploads a user video
+      tags:
+      - Videos
+      parameters: []
+      responses:
+        '200':
+          description: blog updated
+          content: {}
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+servers:
+- url: http://localhost:3000
+  variables:
+    defaultHost:
+      default: localhost:3000

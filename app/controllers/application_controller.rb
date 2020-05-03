@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
 
-  before_action :authenticate
+  before_action :authenticate!
 
   rescue_from Mongoid::Errors::DocumentNotFound, with: :four_zero_four
   rescue_from Mongoid::Errors::Validations, with: :four_twenty_two
@@ -18,13 +18,21 @@ class ApplicationController < ActionController::API
     render json: { message: e.message }, status: :not_found
   end
 
-  def authenticate
+  protected
+
+  def authenticate!
     authenticate_or_request_with_http_token do |token, _options|
-      User.find_by(access_token: token)
+      @current_user = User.find_by(access_token: token)
     end
+    @current_user || request_http_token_authentication
   end
 
   def current_user
-    @current_user ||= authenticate
+    @current_user
+  end
+
+  def request_http_token_authentication(realm = "Application")
+    self.headers["WWW-Authenticate"] = %(Token realm="#{realm.gsub(/"/, "")}")
+    render json: { error: "HTTP Token: Access denied."}, status: :unauthorized
   end
 end

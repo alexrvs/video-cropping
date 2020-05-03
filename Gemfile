@@ -46,7 +46,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'rspec-rails', '~> 3.6'
   gem 'faker'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'database_cleaner'
 end
 
@@ -57,7 +57,6 @@ group :test do
   gem 'mongoid-rspec'
   gem 'simplecov'
   gem 'simplecov-rcov'
-
 end
 
 group :development do

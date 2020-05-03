@@ -2,11 +2,13 @@ Rails.application.routes.draw do
 
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
-  api_version(:module => "V1", :path => {:value => "api/v1"}) do
-    resources :users
-    resources :videos do
-      member do
-        post :reload
+  namespace :api do
+    api_version(:module => "V1", :path => {:value => "v1"}) do
+      resources :users
+      resources :videos do
+        member do
+          post :reload
+        end
       end
     end
   end
