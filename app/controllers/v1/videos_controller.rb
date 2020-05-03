@@ -8,6 +8,7 @@ class V1::VideosController < ApplicationController
 
   def create
     @video = current_user.videos.create!(video_params)
+    CropperService.new(@video, :input_video).call
     @video.run_worker!
     render json: @video, serializer: V1::VideoSerializer, status: :created
   end

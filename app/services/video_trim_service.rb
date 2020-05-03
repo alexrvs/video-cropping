@@ -9,12 +9,14 @@ class VideoTrimService
   def call
     begin
       video.start!
+      validate!
       crop_video!
     rescue FFMPEG::Error => e
       video.processing_errors = e.message
       video.fail!
     rescue Exception => e
       video.processing_errors = e.message
+      binding.pry
       video.fail!
     end
   end
@@ -22,7 +24,14 @@ class VideoTrimService
   private
 
   def validate!
-    video.output_video_duration < video.input_video_duration
+    has_input_video_attributes = video.input_video_file? && video.input_video_duration?
+    valid_start_trim_time = video.start_time_trim < video.input_video_duration.to_i
+    valid_end_trim_time = video.end_time_trim < video.input_video_duration.to_i
+    raise Exception, "Input file doesn't uploaded" unless has_input_video_attributes
+    #raise ExceptionHandler unless has_input_video_attributes
+    raise Exception, 'Start or End time greater than input video duration' unless valid_start_trim_time && valid_end_trim_time
+
+    true
   end
 
   def crop_video!
