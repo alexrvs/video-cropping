@@ -23,17 +23,17 @@ require 'rails_helper'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe VideosController, type: :api do
+RSpec.describe Api::V1::VideosController, type: :api do
 
   # This should return the minimal set of attributes required to create a valid
   # Video. As you add validations to Video, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    skip('Add a hash of attributes valid for your model')
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    skip('Add a hash of attributes invalid for your model')
   }
 
   # This should return the minimal set of values that should be in the session
@@ -41,89 +41,44 @@ RSpec.describe VideosController, type: :api do
   # VideosController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  describe "GET #index" do
-    it "returns a success response" do
-      video = Video.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(response).to be_successful
-    end
-  end
-
-  describe "GET #show" do
-    it "returns a success response" do
-      video = Video.create! valid_attributes
-      get :show, params: {id: video.to_param}, session: valid_session
-      expect(response).to be_successful
-    end
-  end
-
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Video" do
-        expect {
-          post :create, params: {video: valid_attributes}, session: valid_session
-        }.to change(Video, :count).by(1)
+  describe 'POST create' do
+    context 'user authenticated' do
+      before(:each) do
+        auth_as_a_valid_user
       end
 
-      it "renders a JSON response with the new video" do
+      context 'with valid params' do
+        before do
+          @params = {
+            'video' => {
+              'start_time_trim' => 10,
+              'end_time_trim' => 70,
+              'input_video' => fixture_file_upload("#{Rails.root}/spec/fixtures/videos/nature.mp4", 'video/mp4')
+            }
+          }
+        end
 
-        post :create, params: {video: valid_attributes}, session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(video_url(Video.last))
-      end
-    end
+        it 'should create video and return json data of created video' do
+          expect{ post 'api/v1/video.json', @params, @auth_params }.to change {@user.videos.count }.by(1)
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new video" do
+          expect(last_response).to equal(201)
 
-        post :create, params: {video: invalid_attributes}, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+          expect(JSON.parse(last_response.body)['start_time_trim']).to equal @params['video']['start_time_trim']
+          expect(JSON.parse(last_response.body)['end_time_trim']).to equal @params['video']['end_time_trim']
+
+          expect(JSON.parse(last_response.body)['status']).to equal 'scheduled'
+
+          video = @user.video.last
+
+          expect(JSON.parse(last_response.body)['input_video']['url']).to equal video.input_video.url
+
+        end
+
       end
     end
   end
 
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
 
-      it "updates the requested video" do
-        video = Video.create! valid_attributes
-        put :update, params: {id: video.to_param, video: new_attributes}, session: valid_session
-        video.reload
-        skip("Add assertions for updated state")
-      end
 
-      it "renders a JSON response with the video" do
-        video = Video.create! valid_attributes
-
-        put :update, params: {id: video.to_param, video: valid_attributes}, session: valid_session
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json')
-      end
-    end
-
-    context "with invalid params" do
-      it "renders a JSON response with errors for the video" do
-        video = Video.create! valid_attributes
-
-        put :update, params: {id: video.to_param, video: invalid_attributes}, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
-      end
-    end
-  end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested video" do
-      video = Video.create! valid_attributes
-      expect {
-        delete :destroy, params: {id: video.to_param}, session: valid_session
-      }.to change(Video, :count).by(-1)
-    end
-  end
 
 end
