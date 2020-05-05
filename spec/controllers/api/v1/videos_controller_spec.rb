@@ -105,12 +105,6 @@ RSpec.describe Api::V1::VideosController, type: :api do
   describe "GET index" do
 
     context 'when use is not authorized' do
-      before :each do
-        @video = create(:video)
-        @file = @video.input_video
-        @fixture_file = Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/videos/nature.mp4"),'video/mp4')
-      end
-
 
       it "should not create video" do
         expect { post "/api/v1/videos", @params, {} }.to_not change { Video.count }
@@ -127,7 +121,6 @@ RSpec.describe Api::V1::VideosController, type: :api do
 
     end
 
-
     context 'when user is authenticated' do
       before do
         auth_as_a_valid_user
@@ -137,15 +130,14 @@ RSpec.describe Api::V1::VideosController, type: :api do
         before do
           @videos = []
           3.times do
-            v = FactoryBot.create(:video)
-            v.user = @user
+            v = FactoryBot.create(:video, user: @user)
             @videos << v
           end
           @videos
         end
 
         it "should return list videos in descending creation order" do
-          get "/api/v1/videos", {}, { 'HTTP_AUTHORIZATION' => "Token #{@user.access_token}"}
+          get "/api/v1/videos", {}, @auth_params
 
           expect(last_response.status).to eql (200)
 
@@ -171,6 +163,61 @@ RSpec.describe Api::V1::VideosController, type: :api do
             expect(JSON.parse(last_response.body).size).to eql(2)
 
           end
+        end
+      end
+    end
+  end
+
+
+  describe "POST restart" do
+    context 'when use is not authenticated' do
+      it "return error for unauthorized user" do
+        post '/api/v1/videos', @params
+        expect(last_response.status).to equal(401)
+        expect(JSON.parse(last_response.body)['error'].to_s).to eq("HTTP Token: Access denied.")
+      end
+    end
+
+    context 'when user is authenticated' do
+      before do
+        auth_as_a_valid_user
+      end
+
+      context "when video is not exist" do
+        it "return error for unauthorized user" do
+          post "/api/v1/videos/#{rand(64)}/reload", @params
+
+          expect(last_response.status).to equal(401)
+          expect(JSON.parse(last_response.body)['error'].to_s).to eq("HTTP Token: Access denied.")
+        end
+      end
+
+      context "when video is not belong to current user" do
+
+        it "return error for unauthorized user" do
+          post "/api/v1/videos/#{FactoryBot.create(:video, aasm_state: "failed").id}/reload", @params
+
+          expect(last_response.status).to equal(401)
+
+          expect(JSON.parse(last_response.body)['error'].to_s).to eq("HTTP Token: Access denied.")
+        end
+      end
+
+      context 'when video can not be restarted' do
+        before do
+          auth_as_a_valid_user
+        end
+
+        before do
+          @video = create(:video, aasm_state: "done", user: @user)
+        end
+
+        it "shoud return error" do
+          post "/api/v1/videos/#{@video.id}/reload", @params, @auth_params
+
+          expect(last_response.status).to eql (422)
+          expect(JSON.parse(last_response.body)["error"]).to eq("Cannot switch aasm state from done via schedule")
+
         end
       end
     end

@@ -11,10 +11,21 @@ module ExceptionHandler
     rescue_from Mongoid::Errors::DocumentNotFound, with: :four_zero_four
     rescue_from Mongoid::Errors::Validations, with: :mongoid_validation
     rescue_from ActionController::ParameterMissing, with: :four_twenty_two
+    rescue_from AASM::InvalidTransition, with: :state_transition_err
 
   end
 
   private
+
+  def state_transition_err(exception)
+    errors = { error: ""}
+    errors[:error] = "Cannot switch %{state_attr_name} from %{current_state_name} via %{event_name}" % {
+        state_attr_name: exception.object.class.human_attribute_name(:aasm_state).downcase,
+        current_state_name: exception.originating_state.to_s,
+        event_name: exception.event_name.to_s
+    }
+    render json: errors, status: :unprocessable_entity
+  end
 
   def mongoid_validation(exception)
     errors = { error: "", details: {} }
