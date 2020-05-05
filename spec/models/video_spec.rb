@@ -69,9 +69,46 @@ RSpec.describe Video, type: :model do
     context 'state machine logic' do
       before do
         @video = FactoryBot.create(:video)
-
-
       end
+
+      context 'from schedule to processing' do
+        it "should set output_video_processing flag" do
+          expect{@video.start!}.to change {
+            @video.output_video_processing
+          }.from(false).to(true)
+        end
+      end
+
+      context 'from processing to done' do
+        before do
+          @video.update_attributes(aasm_state: 'processing', output_video_processing: true)
+        end
+
+        it 'should set output_video_processing' do
+          expect { @video.completed! }.to change {@video.output_video_processing}.from(true).to(false)
+        end
+      end
+
+      context 'from processing to fail' do
+        before do
+          @video.update_attributes(aasm_state: 'processing',output_video_processing: true)
+        end
+
+        it 'should set output_video_processing attribute' do
+          expect { @video.fail! }.to change {@video.output_video_processing}.from(true).to(false)
+        end
+      end
+
+      context 'from failed to scheduled' do
+        before do
+          @video.update_attributes(aasm_state: 'failed', output_video_processing: false)
+        end
+
+        it 'should set output_video_processing to true' do
+          expect{@video.schedule!}.to change { @video.output_video_processing }.from(false).to(true)
+        end
+      end
+
     end
 
 

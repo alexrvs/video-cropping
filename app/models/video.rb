@@ -34,6 +34,9 @@ class Video
 
     event :schedule do
       transitions from: :failed, to: :scheduled
+      before do
+        self.output_video_processing = true
+      end
     end
 
     event :start do
@@ -53,7 +56,7 @@ class Video
     event :fail do
       transitions from: :processing, to: :failed
       after do
-        self.output_video_processing = true
+        self.output_video_processing = false
       end
     end
 

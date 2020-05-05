@@ -36,6 +36,7 @@ RSpec.configure do |config|
   config.include AuthenticationHelper, type: :api
 
   config.include ActionDispatch::TestProcess
+  config.include CarrierWave::Test::Matchers
 
   # rspec-mocks config goes here. You can use an alternate test double
   # library (such as bogus or mocha) by changing the `mock_with` option here.

@@ -2,7 +2,7 @@ class Api::V1::VideosController < ApplicationController
 
   def index
     @videos = current_user.videos.order_by(updated_at: :desc)
-                  .page(params[:page] || 1).per(30)
+                  .page(params[:page] || 1).per(params[:per_page] || 30)
     render json: @videos, each_serializer: Api::V1::VideoSerializer
   end
 
