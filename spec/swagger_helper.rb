@@ -24,10 +24,10 @@ RSpec.configure do |config|
       paths: {},
       servers: [
         {
-          url: 'http://localhost:3000/',
+          url: 'https://videotrim.herokuapp.com/',
           variables: {
             defaultHost: {
-              default: 'localhost:3000'
+              default: 'https://videotrim.herokuapp.com'
             }
           }
         }

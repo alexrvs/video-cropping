@@ -46,7 +46,7 @@ paths:
               properties:
                 input_video:
                   type: file
-                  example: "#<Rack::Test::UploadedFile:0x00005559eecd3f78>"
+                  example: "#<Rack::Test::UploadedFile:0x00005622524d8b70>"
                 start_time_trim:
                   type: integer
                   example: 10
@@ -148,7 +148,7 @@ paths:
           description: not_found
           content: {}
 servers:
-- url: http://localhost:3000/
+- url: https://videotrim.herokuapp.com/
   variables:
     defaultHost:
-      default: localhost:3000
+      default: https://videotrim.herokuapp.com

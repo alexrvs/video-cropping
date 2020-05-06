@@ -48,6 +48,7 @@ group :development, :test do
   gem 'faker'
   gem 'factory_bot_rails'
   gem 'database_cleaner'
+  gem 'rswag'
 end
 
 gem 'aasm', '~> 4.11', '>= 4.11.1'
@@ -57,7 +58,7 @@ group :test do
   gem 'mongoid-rspec'
   gem 'simplecov'
   gem 'simplecov-rcov'
-  gem 'rswag'
+
 end
 
 group :development do
