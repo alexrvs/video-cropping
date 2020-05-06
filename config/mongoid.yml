@@ -4,7 +4,7 @@ development:
     # Defines the default client. (required)
     default:
       # Mongoid can connect to a URI accepted by the driver:
-      # uri: mongodb://user:password@mongodb.domain.com:27017/video_cropping_development
+      uri: ENV['MONGODB_URI'] #mongodb://user:password@mongodb.domain.com:27017/video_cropping_development
 
       # Otherwise define the parameters separately.
       # This defines the name of the default database that Mongoid can connect to.
