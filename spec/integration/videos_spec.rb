@@ -58,46 +58,12 @@ describe 'Video API' do
       consumes 'application/json'
       parameter name: :Authorization, in: :header, type: :string, default: 'Token 8b6a04aac0264bef89d99c3cc5fd8513'
       parameter name: :page, in: :query, type: :integer, description: 'Page number. Default: 1', required: false
-      parameter name: :per_page, in: :query, type: :integer, description: 'Per page items. Default: 25', required: false
+      parameter name: :per_page, in: :query, type: :integer, description: 'Per page items. Default: 30', required: false
 
       response '200', :success do
-        schema type: :object,
-               properties: {
-                 collection: {
-                   type: :array,
-                   items: {
-                     type: :object,
-                     properties: {
-                       id: { type: :integer },
-                       input_video: {
-                         type: :object,
-                         properties: {
-                           url: { type: :string },
-                           duration: { type: :integer }
-                         }
-                       },
-                       output_video: {
-                         type: :object,
-                         properties: {
-                           url: { type: :string },
-                           duration: { type: :integer }
-                         }
-                       },
-                       processing_errors: { type: :string },
-                       start_time_trim: { type: :integer },
-                       end_time_trim: { type: :integer },
-                       input_video_duration: { type: :integer },
-                       output_video_duration: { type: :integer },
-                       status: { type: :string },
-                       created_at: { type: :string },
-                       updated_at: { type: :string }
-                     }
-                   }
-                 }
-               }
         let!(:user) { FactoryBot.create(:user) }
         let(:Authorization) { 'Token ' + user.access_token }
-        let!(:video){ FactoryBot.create(:video, user: user)}
+        let(:video){ FactoryBot.create(:video, user: user) }
         run_test!
       end
     end
@@ -145,12 +111,16 @@ describe 'Video API' do
                    }
                  }
                }
+        let!(:user) { FactoryBot.create(:user) }
+        let(:Authorization) { 'Token ' + user.access_token }
+        let(:id){ FactoryBot.create(:video, user: user, aasm_state: 'failed').id }
+        run_test!
       end
 
       response '404', :not_found do
-        let!(:user) { create(:user) }
+        let!(:user) { FactoryBot.create(:user) }
         let(:Authorization) { 'Token ' + user.access_token }
-        let!(:id) { 'invalid' }
+        let(:id) { 'invalid' }
         run_test!
       end
 

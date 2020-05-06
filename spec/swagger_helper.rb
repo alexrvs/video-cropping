@@ -22,13 +22,6 @@ RSpec.configure do |config|
         version: 'v1'
       },
       paths: {},
-      securityDefinitions: {
-        access_token: {
-          type: :apiKey,
-          name: 'Authorization',
-          in: :header
-        }
-      },
       servers: [
         {
           url: 'http://localhost:3000/',

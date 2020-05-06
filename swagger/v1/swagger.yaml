@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.1
 info:
-  title: API V1
+  title: Video Cropping Api V1
   version: v1
 paths:
   "/api/v1/users":
@@ -46,7 +46,7 @@ paths:
               properties:
                 input_video:
                   type: file
-                  example: "#<Rack::Test::UploadedFile:0x00005612bf899388>"
+                  example: "#<Rack::Test::UploadedFile:0x00005559eecd3f78>"
                 start_time_trim:
                   type: integer
                   example: 10
@@ -75,7 +75,7 @@ paths:
           type: integer
       - name: per_page
         in: query
-        description: 'Per page items. Default: 25'
+        description: 'Per page items. Default: 30'
         required: false
         schema:
           type: integer
@@ -100,14 +100,53 @@ paths:
         schema:
           type: string
       responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  collection:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        input_video:
+                          type: object
+                          properties:
+                            url:
+                              type: string
+                            duration:
+                              type: integer
+                        output_video:
+                          type: object
+                          properties:
+                            url:
+                              type: string
+                            duration:
+                              type: integer
+                        processing_errors:
+                          type: string
+                        start_time_trim:
+                          type: integer
+                        end_time_trim:
+                          type: integer
+                        input_video_duration:
+                          type: integer
+                        output_video_duration:
+                          type: integer
+                        status:
+                          type: string
+                        created_at:
+                          type: string
+                        updated_at:
+                          type: string
         '404':
           description: not_found
           content: {}
-securityDefinitions:
-  access_token:
-    type: apiKey
-    name: Authorization
-    in: header
 servers:
 - url: http://localhost:3000/
   variables:

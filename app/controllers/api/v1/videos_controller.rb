@@ -15,8 +15,12 @@ class Api::V1::VideosController < ApplicationController
 
   def reload
     @video = current_user.videos.where(id: params[:id]).first
-    @video.restart!
-    render json: @video, serializer: Api::V1::VideoSerializer
+    if @video.present?
+      @video.restart!
+      render json: @video, serializer: Api::V1::VideoSerializer
+    else
+      render status: :not_found
+    end
   end
 
   private
