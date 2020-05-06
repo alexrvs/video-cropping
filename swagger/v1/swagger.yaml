@@ -8,14 +8,11 @@ paths:
     post:
       summary: Creates a User
       tags:
-      - Pets
+      - Users
       parameters: []
       responses:
         '201':
           description: user created
-          content: {}
-        '422':
-          description: invalid request
           content: {}
       requestBody:
         content:
@@ -25,40 +22,44 @@ paths:
               properties: {}
               required: []
   "/api/v1/videos":
-    parameters:
-    - name: file
-      in: formData
-      required: true
-      schema:
-        type: file
-    - name: video
-      in: formData
-      schema:
-        type: object
-        properties:
-          start_time_trim:
-            type: integer
-          end_time_trim:
-            type: integer
-        required:
-        - start_time_trim
-        - end_time_trim
     post:
-      summary: Uploads a user video
+      summary: Uploads videos by authorized user
       tags:
       - Videos
-      parameters: []
+      parameters:
+      - name: Authorization
+        in: header
+        default: Token 8b6a04aac0264bef89d99c3cc5fd8513
+        schema:
+          type: string
+      - name: video
+        in: fromData
+        schema:
+          type: object
+          properties:
+            start_time_trim:
+              type: integer
+              example: 10
+            end_time_trim:
+              type: integer
+              example: 50
+          required:
+          - start_time_trim
+          - end_time_trim
       responses:
-        '200':
-          description: blog updated
+        '401':
+          description: unauthorized
+          content: {}
+        '201':
+          description: created
           content: {}
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: file
 servers:
-- url: http://localhost:3000
+- url: http://localhost:3000/
   variables:
     defaultHost:
       default: localhost:3000
