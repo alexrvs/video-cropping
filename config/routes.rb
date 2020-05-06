@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
+  if Rails.env.development? || Rails.env.test?
+    mount Rswag::Ui::Engine => '/api-docs'
+    mount Rswag::Api::Engine => '/api-docs'
+  end
 
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
   namespace :api do
     api_version(:module => "V1", :path => {:value => "v1"}) do
       resources :users
