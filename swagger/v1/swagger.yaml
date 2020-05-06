@@ -29,23 +29,8 @@ paths:
       parameters:
       - name: Authorization
         in: header
-        default: Token 8b6a04aac0264bef89d99c3cc5fd8513
         schema:
           type: string
-      - name: video
-        in: fromData
-        schema:
-          type: object
-          properties:
-            start_time_trim:
-              type: integer
-              example: 10
-            end_time_trim:
-              type: integer
-              example: 50
-          required:
-          - start_time_trim
-          - end_time_trim
       responses:
         '401':
           description: unauthorized
@@ -55,9 +40,74 @@ paths:
           content: {}
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              type: file
+              type: object
+              properties:
+                input_video:
+                  type: file
+                  example: "#<Rack::Test::UploadedFile:0x00005612bf899388>"
+                start_time_trim:
+                  type: integer
+                  example: 10
+                end_time_trim:
+                  type: integer
+                  example: 50
+              required:
+              - start_time_trim
+              - end_time_trim
+              - input_video
+    get:
+      summary: Get list all video by specific user
+      tags:
+      - User Videos
+      parameters:
+      - name: Authorization
+        in: header
+        default: Token 8b6a04aac0264bef89d99c3cc5fd8513
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: 'Page number. Default: 1'
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: 'Per page items. Default: 25'
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: success
+          content: {}
+  "/api/v1/videos/{id}/reload":
+    post:
+      summary: Reload video by id
+      tags:
+      - Reload Video
+      parameters:
+      - name: Authorization
+        in: header
+        default: Token 8b6a04aac0264bef89d99c3cc5fd8513
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '404':
+          description: not_found
+          content: {}
+securityDefinitions:
+  access_token:
+    type: apiKey
+    name: Authorization
+    in: header
 servers:
 - url: http://localhost:3000/
   variables:

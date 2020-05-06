@@ -18,10 +18,17 @@ RSpec.configure do |config|
     'v1/swagger.yaml' => {
       openapi: '3.0.1',
       info: {
-        title: 'API V1',
+        title: 'Video Cropping Api V1',
         version: 'v1'
       },
       paths: {},
+      securityDefinitions: {
+        access_token: {
+          type: :apiKey,
+          name: 'Authorization',
+          in: :header
+        }
+      },
       servers: [
         {
           url: 'http://localhost:3000/',
