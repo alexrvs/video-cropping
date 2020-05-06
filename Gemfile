@@ -51,12 +51,13 @@ group :development, :test do
 end
 
 gem 'aasm', '~> 4.11', '>= 4.11.1'
-gem 'rswag'
+
 
 group :test do
   gem 'mongoid-rspec'
   gem 'simplecov'
   gem 'simplecov-rcov'
+  gem 'rswag'
 end
 
 group :development do
